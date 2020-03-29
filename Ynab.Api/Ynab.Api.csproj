@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>YnabRestClient</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Gareth Baumgart</Authors>
+    <PackageTags></PackageTags>
+    <Description>
+      A Restful Api (C#) client to consume YNAB's api emdpoints. 
+      GitHub link https://github.com/garethbaumgart/YnabApi
+    </Description>
   </PropertyGroup>
 
   <ItemGroup>

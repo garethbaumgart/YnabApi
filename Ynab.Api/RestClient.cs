@@ -20,6 +20,7 @@ namespace Ynab.Api
             string apiToken)
         {
             _httpClient = httpClient;
+            _uriBuilder = uriBuilder;
             _apiToken = apiToken;
             _contractResolver = new DefaultContractResolver
             {
