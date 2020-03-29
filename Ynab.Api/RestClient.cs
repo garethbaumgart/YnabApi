@@ -1,9 +1,10 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Ynab.Api.Builders;
-using Ynab.Api.Interfaces;
 using Ynab.Api.Models;
 
 namespace Ynab.Api
@@ -31,11 +32,31 @@ namespace Ynab.Api
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiToken);
         }
+
+        private HttpContent BuildHttpContent(TransactionData transactionData)
+        {
+            return new StringContent(JsonConvert.SerializeObject(transactionData));
+        }
         
         public async Task<ApiResponse<AccountData>> GetAccounts(string budgetId)
         {
             var rawResult = await _httpClient.GetAsync(_uriBuilder.BuildGetAccountsUri(budgetId));
             ApiResponse<AccountData> result = await ResponseBuilder.BuildResponse<AccountData>(rawResult);
+            return result;
+        }
+
+        public async Task<ApiResponse<TransactionData>> GetTransations(string budgetId, string accountId)
+        {
+            var rawResult = await _httpClient.GetAsync(_uriBuilder.BuildGetTransactionsByAccount(budgetId, accountId));
+            ApiResponse<TransactionData> result = await ResponseBuilder.BuildResponse<TransactionData>(rawResult);
+            return result;
+        }
+
+        public async Task<ApiResponse<TransactionData>> UploadTransactions(string budgetId, IEnumerable<Transaction> transactions)
+        {
+            var transactionData = new TransactionData(transactions);
+            var rawResult = await _httpClient.PostAsync(_uriBuilder.BuildUploadTransactions(budgetId), BuildHttpContent(transactionData));
+            ApiResponse<TransactionData> result = await ResponseBuilder.BuildResponse<TransactionData>(rawResult);
             return result;
         }
     }

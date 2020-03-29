@@ -1,5 +1,3 @@
-using Ynab.Api.Interfaces;
-
 namespace Ynab.Api.Builders
 {
     public class UriBuilder : IUriBuilder
@@ -13,6 +11,16 @@ namespace Ynab.Api.Builders
         public string BuildGetAccountsUri(string budgetId)
         {
             return $"{_baseUri}/budgets/{budgetId}/accounts";
+        }
+
+        public string BuildGetTransactionsByAccount(string budgetId, string accountId)
+        {
+            return $"{_baseUri}budgets/{budgetId}/accounts/{accountId}/transactions";
+        }
+
+        public string BuildUploadTransactions(string budgetId)
+        {
+            return $"{_baseUri}budgets/{budgetId}/transactions";
         }
     }
 }
