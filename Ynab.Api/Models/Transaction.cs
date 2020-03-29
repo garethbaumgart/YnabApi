@@ -1,5 +1,5 @@
 using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Ynab.Api.Models
 {
@@ -13,21 +13,21 @@ namespace Ynab.Api.Models
             this.account_id = accountId;
         }
         
-        [JsonProperty("amount")]
+        [JsonPropertyName("amount")]
         public int amount { get; }
-        [JsonProperty("account_id")]
+        [JsonPropertyName("account_id")]
         public string account_id { get; }
-        [JsonProperty("payee_name")]
+        [JsonPropertyName("payee_name")]
         public string payee_name { get; }
-        [JsonProperty("date")]
+        [JsonPropertyName("date")]
         public DateTime date { get; }
-        [JsonProperty("cleared")]
+        [JsonPropertyName("cleared")]
         public string cleared => "cleared";
-        [JsonProperty("approved")]
+        [JsonPropertyName("approved")]
         public bool approved => true;
-        [JsonProperty("flag_color")]
+        [JsonPropertyName("flag_color")]
         public string flag_color => "purple";
-        [JsonProperty("import_id")]
+        [JsonPropertyName("import_id")]
         public string import_id => Guid.NewGuid().ToString();
     }
 }

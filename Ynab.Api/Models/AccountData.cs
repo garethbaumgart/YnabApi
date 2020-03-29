@@ -1,13 +1,13 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Ynab.Api.Models
 {
     public class AccountData
     {
-        [JsonProperty("accounts")]
-        public List<Account> Accounts;
-        [JsonProperty("server_knowledge")]
-        public int ServerKnowledge;
+        [JsonPropertyName("accounts")]
+        public List<Account> Accounts { get; set; }
+        [JsonPropertyName("server_knowledge")]
+        public int ServerKnowledge { get; set; }
     }
 }

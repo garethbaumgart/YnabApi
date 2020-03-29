@@ -1,14 +1,14 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Ynab.Api.Models
 {
     public class Error
     {
-        [JsonProperty("id")]
-        public string Id;
-        [JsonProperty("name")]
-        public string Name;
-        [JsonProperty("detail")]
-        public string Detail;
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("detail")]
+        public string Detail { get; set; }
     }
 }

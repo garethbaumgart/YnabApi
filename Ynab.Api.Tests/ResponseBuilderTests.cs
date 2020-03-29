@@ -1,9 +1,9 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoFixture;
-using Newtonsoft.Json;
 using Xunit;
 using Ynab.Api.Builders;
 using Ynab.Api.Models;
@@ -24,7 +24,7 @@ namespace Ynab.Api.Tests
             var actualResponse = await ResponseBuilder.BuildResponse<AccountData>(rawResult);
             
             //Assert
-            Assert.Equal(null, actualResponse.Data);
+            Assert.Null(actualResponse.Data);
             Assert.Equal(actualResponse.ReasonPhrase, rawResult.ReasonPhrase);
             Assert.Equal(actualResponse.IsSuccess, rawResult.IsSuccessStatusCode);
             Assert.Equal(actualResponse.StatusCode, rawResult.StatusCode);
@@ -36,7 +36,7 @@ namespace Ynab.Api.Tests
             //Arrange
             var rawResult = new HttpResponseMessage(HttpStatusCode.OK);
             var expected = new Fixture().Build<ApiResponse<AccountData>>().Create();
-            rawResult.Content = new StringContent(JsonConvert.SerializeObject(expected));
+            rawResult.Content = new StringContent(JsonSerializer.Serialize(expected));
             rawResult.ReasonPhrase = "TestReasonPhrase";
 
             //Act

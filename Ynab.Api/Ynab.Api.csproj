@@ -11,9 +11,5 @@
       GitHub link https://github.com/garethbaumgart/YnabApi
     </Description>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-  </ItemGroup>
-
+  
 </Project>

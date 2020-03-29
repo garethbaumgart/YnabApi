@@ -1,28 +1,28 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Ynab.Api.Models
 {
     public class Account
     {
-        [JsonProperty("id")]
-        public string Id;
-        [JsonProperty("name")]
-        public string Name;
-        [JsonProperty("checking")]
-        public string Checking;
-        [JsonProperty("on_budget")]
-        public bool OnBudget;
-        [JsonProperty("closed")]
-        public bool Closed;
-        [JsonProperty("note")]
-        public string Note;
-        [JsonProperty("balance")]
-        public int Balance;
-        [JsonProperty("cleared_balance")]
-        public int ClearedBalance;
-        [JsonProperty("transfer_payee_id")]
-        public string TransferPayeeId;
-        [JsonProperty("deleted")]
-        public bool Deleted;
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("checking")]
+        public string Checking { get; set; }
+        [JsonPropertyName("on_budget")]
+        public bool OnBudget { get; set; }
+        [JsonPropertyName("closed")]
+        public bool Closed { get; set; }
+        [JsonPropertyName("note")]
+        public string Note { get; set; }
+        [JsonPropertyName("balance")]
+        public int Balance { get; set; }
+        [JsonPropertyName("cleared_balance")]
+        public int ClearedBalance { get; set; }
+        [JsonPropertyName("transfer_payee_id")]
+        public string TransferPayeeId { get; set; }
+        [JsonPropertyName("deleted")]
+        public bool Deleted { get; set; }
     }
 }
