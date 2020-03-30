@@ -10,6 +10,7 @@
       A Restful Api (C#) client to consume YNAB's api emdpoints. 
       GitHub link https://github.com/garethbaumgart/YnabApi
     </Description>
+    <RepositoryUrl>https://github.com/garethbaumgart/YnabApi</RepositoryUrl>
   </PropertyGroup>
   
 </Project>
