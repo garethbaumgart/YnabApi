@@ -1,16 +1,16 @@
 using System.Net;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Ynab.Api.Models
 {
     public class ApiResponse<T>
     {
-        [JsonProperty("data")]
-        public T Data;
-        [JsonProperty("error")]
-        public Error Error;
-        public bool IsSuccess;
-        public  HttpStatusCode StatusCode;
-        public string ReasonPhrase;
+        [JsonPropertyName("data")]
+        public T Data { get; set; }
+        [JsonPropertyName("error")]
+        public Error Error { get; set; }
+        public bool IsSuccess { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
+        public string ReasonPhrase { get; set; }
     }
 }

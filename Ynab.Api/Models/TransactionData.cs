@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Ynab.Api.Models
 {
@@ -11,10 +11,10 @@ namespace Ynab.Api.Models
             Transactions = transactions;
         }
         
-        [JsonProperty("transactions")]
-        public IEnumerable<Transaction> Transactions;
-        [JsonProperty("server_knowledge")]
-        public int ServerKnowledge;
+        [JsonPropertyName("transactions")]
+        public IEnumerable<Transaction> Transactions { get; }
+        [JsonPropertyName("server_knowledge")]
+        public int ServerKnowledge { get; set; }
 
     }
 }

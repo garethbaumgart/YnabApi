@@ -1,9 +1,8 @@
-using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoFixture;
-using Newtonsoft.Json;
 using Xunit;
 using Ynab.Api.Builders;
 using Ynab.Api.Models;
@@ -24,7 +23,7 @@ namespace Ynab.Api.Tests
             var actualResponse = await ResponseBuilder.BuildResponse<AccountData>(rawResult);
             
             //Assert
-            Assert.Equal(null, actualResponse.Data);
+            Assert.Null(actualResponse.Data);
             Assert.Equal(actualResponse.ReasonPhrase, rawResult.ReasonPhrase);
             Assert.Equal(actualResponse.IsSuccess, rawResult.IsSuccessStatusCode);
             Assert.Equal(actualResponse.StatusCode, rawResult.StatusCode);
@@ -34,21 +33,22 @@ namespace Ynab.Api.Tests
         public async Task BuildResponse_WithValidContent_ReturnsResultWithValidData()
         {
             //Arrange
-            var rawResult = new HttpResponseMessage(HttpStatusCode.OK);
-            var expected = new Fixture().Build<ApiResponse<AccountData>>().Create();
-            rawResult.Content = new StringContent(JsonConvert.SerializeObject(expected));
-            rawResult.ReasonPhrase = "TestReasonPhrase";
+            var expectedData = new Fixture().Create<AccountData>();
+            var expected = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(JsonSerializer.Serialize(new ApiResponse<AccountData>{ Data = expectedData })),
+                ReasonPhrase = "TestReasonPhrase"
+            };
 
             //Act
-            var actual = await ResponseBuilder.BuildResponse<AccountData>(rawResult);
+            var actual = await ResponseBuilder.BuildResponse<AccountData>(expected);
             
             //Assert
-            //Todo - Fix commented assert
-            //Assert.True(expected.Data.Equals(actual.Data));
-            Assert.Equal(actual.Data.Accounts.Count(), expected.Data.Accounts.Count());
-            Assert.Equal(actual.ReasonPhrase, rawResult.ReasonPhrase);
-            Assert.Equal(actual.IsSuccess, rawResult.IsSuccessStatusCode);
-            Assert.Equal(actual.StatusCode, rawResult.StatusCode);
+            Assert.Equal(expectedData, actual.Data);
+            Assert.Equal(expected.StatusCode, actual.StatusCode);
+            Assert.Equal(expected.ReasonPhrase, actual.ReasonPhrase);
+            Assert.Equal(expected.IsSuccessStatusCode, actual.IsSuccess);
         }
     }
 }

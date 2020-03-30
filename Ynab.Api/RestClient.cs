@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Ynab.Api.Builders;
 using Ynab.Api.Models;
 
@@ -12,7 +11,6 @@ namespace Ynab.Api
     public class RestClient : IRestClient
     {
         private readonly string _apiToken;
-        private readonly DefaultContractResolver _contractResolver;
         private readonly HttpClient _httpClient;
         private readonly IUriBuilder _uriBuilder;
         public RestClient(HttpClient httpClient,
@@ -22,10 +20,6 @@ namespace Ynab.Api
             _httpClient = httpClient;
             _uriBuilder = uriBuilder;
             _apiToken = apiToken;
-            _contractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            };
             SetupHttpClient();
         }
 
