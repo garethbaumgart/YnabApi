@@ -30,7 +30,7 @@ namespace Ynab.Api
 
         private HttpContent BuildHttpContent(TransactionData transactionData)
         {
-            return new StringContent(JsonSerializer.Serialize(transactionData));
+            return new StringContent(JsonConvert.SerializeObject(transactionData, Formatting.None, new JsonSerializerSettings { ContractResolver = _contractResolver }));
         }
         
         public async Task<ApiResponse<AccountData>> GetAccounts(string budgetId)
