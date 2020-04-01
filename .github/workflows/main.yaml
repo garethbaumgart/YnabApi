@@ -4,7 +4,6 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]
 
 jobs:
   build:
@@ -13,20 +12,50 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-        source-url: https://nuget.pkg.github.com/garethbaumgart/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    
     - name: Install dependencies
       run: dotnet restore
+    
     - name: Build
       run: dotnet build --configuration Release --no-restore
+    
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+    
     - name: Pack Nuget Package
-      run: dotnet pack --no-build --configuration Release
-    - name: Publish Nuget Package
-      run: dotnet nuget push ./Ynab.Api/bin/Release/*.nupkg
+      run: dotnet pack --no-build --configuration Release -o artifact
+    
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2-preview
+      with:
+        name: artifactv${{github.RUN_NUMBER}}
+        path: ./artifact/*.nupkg
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    if: github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v1.0.0
+        with:
+          name: artifactv${{github.RUN_NUMBER}}
+          
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
+          source-url: https://nuget.pkg.github.com/garethbaumgart/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        
+      - name: Publish Nuget Package
+        run: dotnet nuget push ./artifactv${{github.RUN_NUMBER}}/*.nupkg
+
