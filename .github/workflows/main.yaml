@@ -59,3 +59,37 @@ jobs:
       - name: Publish Nuget Package
         run: dotnet nuget push ./artifactv${{github.RUN_NUMBER}}/*.nupkg
 
+      - name: Store package name
+        id: store
+        run: |
+          OUTPUT="$(ls ./artifactv${{github.RUN_NUMBER}}/)"
+          echo "::set-output name=packagename::$OUTPUT"
+        
+      - name: Find package version
+        id: packageversion
+        uses: AsasInnab/regex-action@v1
+        with:
+          regex_pattern: '[0-9].[0-9].[0-9]'
+          regex_flags: 'gim'
+          search_string: ${{steps.store.outputs.packagename}}
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "${{ steps.packageversion.outputs.first_match }}"
+          release_name: "Release ${{ steps.packageversion.outputs.first_match }}"
+      
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./artifactv${{github.RUN_NUMBER}}/${{steps.store.outputs.packagename}}
+          asset_name: ${{steps.store.outputs.packagename}}
+          asset_content_type: application/nupkg
+
