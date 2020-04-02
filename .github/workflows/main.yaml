@@ -82,7 +82,7 @@ jobs:
           tag_name: "${{ steps.packageversion.outputs.first_match }}"
           release_name: "Release ${{ steps.packageversion.outputs.first_match }}"
       
-       - name: Upload Release Asset
+      - name: Upload Release Asset
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
         env:
