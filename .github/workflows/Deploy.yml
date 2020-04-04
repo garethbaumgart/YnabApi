@@ -1,0 +1,64 @@
+name: Deploy and Release NuGet Package
+
+on:
+  repository_dispatch:
+    types: [Deployment]
+
+jobs:
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    if: github.ref == 'refs/heads/master'
+    
+    steps:
+      - uses: actions/checkout@v2
+          
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
+          source-url: https://nuget.pkg.github.com/garethbaumgart/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        
+      - name: Pack NuGet package
+        run: dotnet pack --configuration Release -o artifact
+        
+      - name: Publish Nuget package
+        run: dotnet nuget push ./artifact/*.nupkg
+
+      - name: Store package name
+        id: store
+        run: |
+          OUTPUT="$(ls ./artifact/)"
+          echo "::set-output name=package_name::$OUTPUT"
+        
+      - name: Find package version
+        id: package_version
+        uses: AsasInnab/regex-action@v1
+        with:
+          regex_pattern: '[0-9].[0-9].[0-9]'
+          regex_flags: 'gim'
+          search_string: ${{steps.store.outputs.package_name}}
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.package_version.outputs.first_match }}
+          release_name: Release ${{ steps.package_version.outputs.first_match }}
+      
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./artifact/${{ steps.store.outputs.package_name }}
+          asset_name: ${{ steps.store.outputs.package_name }}
+          asset_content_type: application/nupkg
+
