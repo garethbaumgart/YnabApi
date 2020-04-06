@@ -49,7 +49,7 @@ namespace Ynab.Api
 
         public async Task<ApiResponse<TransactionData>> UploadTransactions(string budgetId, IEnumerable<Transaction> transactions)
         {
-            var transactionData = new TransactionData(transactions);
+            var transactionData = new TransactionData { Transactions = transactions };
             var rawResult = await _httpClient.PostAsync(_uriBuilder.BuildUploadTransactions(budgetId), BuildHttpContent(transactionData));
             ApiResponse<TransactionData> result = await ResponseBuilder.BuildResponse<TransactionData>(rawResult);
             return result;

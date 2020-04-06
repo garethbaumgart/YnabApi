@@ -7,11 +7,11 @@ namespace Ynab.Api.Models
     public class Account : IEquatable<Account>
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonPropertyName("checking")]
-        public string Checking { get; set; }
+        [JsonPropertyName("type")]
+        public AccountType Type { get; set; }
         [JsonPropertyName("on_budget")]
         public bool OnBudget { get; set; }
         [JsonPropertyName("closed")]
@@ -19,11 +19,13 @@ namespace Ynab.Api.Models
         [JsonPropertyName("note")]
         public string Note { get; set; }
         [JsonPropertyName("balance")]
-        public int Balance { get; set; }
+        public long Balance { get; set; }
         [JsonPropertyName("cleared_balance")]
-        public int ClearedBalance { get; set; }
+        public long ClearedBalance { get; set; }
+        [JsonPropertyName("uncleared_balance")]
+        public long UnclearedBalance { get; set; }
         [JsonPropertyName("transfer_payee_id")]
-        public string TransferPayeeId { get; set; }
+        public Guid TransferPayeeId { get; set; }
         [JsonPropertyName("deleted")]
         public bool Deleted { get; set; }
 
@@ -34,8 +36,8 @@ namespace Ynab.Api.Models
             !Equals(left, right);
 
         public bool Equals([AllowNull] Account other) =>
-            (Id, Name, Checking, OnBudget, Closed, Note, Balance, ClearedBalance, TransferPayeeId, Deleted) ==
-            (other.Id, other.Name, other.Checking, other.OnBudget, other.Closed, other.Note, other.Balance, other.ClearedBalance, other.TransferPayeeId, other.Deleted);
+            (Id, Name, Type, OnBudget, Closed, Note, Balance, ClearedBalance, UnclearedBalance, TransferPayeeId, Deleted) ==
+            (other.Id, other.Name, other.Type, other.OnBudget, other.Closed, other.Note, other.Balance, other.ClearedBalance, other.UnclearedBalance, other.TransferPayeeId, other.Deleted);
 
         public override bool Equals(object obj) =>
             (obj is Account account) && Equals(account);
@@ -45,12 +47,13 @@ namespace Ynab.Api.Models
             HashCode hash = new HashCode();
             hash.Add(Id);
             hash.Add(Name);
-            hash.Add(Checking);
+            hash.Add(Type);
             hash.Add(OnBudget);
             hash.Add(Closed);
             hash.Add(Note);
             hash.Add(Balance);
             hash.Add(ClearedBalance);
+            hash.Add(UnclearedBalance);
             hash.Add(TransferPayeeId);
             hash.Add(Deleted);
             return hash.ToHashCode();
