@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -19,7 +20,8 @@ namespace Ynab.Api.Models
             !Equals(left, right);
 
         public bool Equals([AllowNull] TransactionData other) =>
-            (Transactions, ServerKnowledge) == (other.Transactions, other.ServerKnowledge);
+            Transactions.SequenceEqual(other.Transactions) &&
+            ServerKnowledge.Equals(other.ServerKnowledge);
         
         public override bool Equals(object obj) =>
             (obj is TransactionData transactionData) && Equals(transactionData);

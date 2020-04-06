@@ -40,7 +40,7 @@ namespace Ynab.Api
             return result;
         }
 
-        public async Task<ApiResponse<TransactionData>> GetTransations(string budgetId, string accountId)
+        public async Task<ApiResponse<TransactionData>> GetTransactions(string budgetId, string accountId)
         {
             var rawResult = await _httpClient.GetAsync(_uriBuilder.BuildGetTransactionsByAccount(budgetId, accountId));
             ApiResponse<TransactionData> result = await ResponseBuilder.BuildResponse<TransactionData>(rawResult);

@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -53,8 +54,9 @@ namespace Ynab.Api.Models
             !Equals(left, right);
 
         public bool Equals([AllowNull] Transaction other) =>
-            (Id, Date, Amount, Memo, Cleared, Approved, FlagColor, AccountId, PayeeId, CategoryId, TransferAccountId, TransferTransactionId, MatchedTransactionId, ImportId, Deleted, AccountName, PayeeName, CategoryName, SubTransactions) ==
-            (other.Id, other.Date, other.Amount, other.Memo, other.Cleared, other.Approved, other.FlagColor, other.AccountId, other.PayeeId, CategoryId, other.TransferAccountId, other.TransferTransactionId, other.MatchedTransactionId, other.ImportId, other.Deleted, other.AccountName, other.PayeeName, other.CategoryName, other.SubTransactions);
+            (Id, Date, Amount, Memo, Cleared, Approved, FlagColor, AccountId, PayeeId, CategoryId, TransferAccountId, TransferTransactionId, MatchedTransactionId, ImportId, Deleted, AccountName, PayeeName, CategoryName) ==
+            (other.Id, other.Date, other.Amount, other.Memo, other.Cleared, other.Approved, other.FlagColor, other.AccountId, other.PayeeId, CategoryId, other.TransferAccountId, other.TransferTransactionId, other.MatchedTransactionId, other.ImportId, other.Deleted, other.AccountName, other.PayeeName, other.CategoryName)
+            && SubTransactions.SequenceEqual(other.SubTransactions);
         
         public override bool Equals(object obj) =>
             (obj is Transaction transaction) && Equals(transaction);
