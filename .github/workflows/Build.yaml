@@ -1,0 +1,65 @@
+name: Build .NET Core Projects
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    
+    - name: Install dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    
+    - name: Pack Nuget Package	
+      run: dotnet pack --no-build --configuration Release -o artifact
+    
+    - name: Store package name
+      id: store
+      run: |
+        OUTPUT="$(ls ./artifact/)"
+        echo "::set-output name=package_name::$OUTPUT"
+
+    - name: Find package version
+      id: package_version
+      uses: AsasInnab/regex-action@v1
+      with:
+        regex_pattern: '[0-9].[0-9].[0-9]'
+        regex_flags: 'gim'
+        search_string: ${{ steps.store.outputs.package_name }}
+    
+    - name: Find latest tag
+      run: |
+        OUTPUT="$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))"
+        echo "::set-env name=latest_tag::$OUTPUT"
+        
+    - name: Check if new version
+      id: vars
+      run: |
+        unset DEPLOY ; if [[ "${{ steps.package_version.outputs.first_match }}" != "${{ env.latest_tag}}" ]]; then DEPLOY=true ; fi
+        echo set-output name=DEPLOY::${DEPLOY}
+        echo ::set-output name=DEPLOY::${DEPLOY}
+    
+    - name: Repository Dispatch
+      if: steps.vars.outputs.DEPLOY
+      uses: peter-evans/repository-dispatch@v1.0.0
+      with:
+        token: ${{ secrets.token }}
+        event-type: Deployment
